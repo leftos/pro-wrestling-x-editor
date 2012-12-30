@@ -1,0 +1,12 @@
+﻿<Window x:Class="WrasslingImpExp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Button x:Name="btnExportModels" Content="Export Models..." HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="105" Click="btnExportModels_Click"/>
+        <ProgressBar x:Name="pb" HorizontalAlignment="Left" Height="25" Margin="85,208,0,0" VerticalAlignment="Top" Width="364"/>
+        <Button x:Name="btnExportTextures" Content="Export Textures..." HorizontalAlignment="Right" Margin="0,37,10,0" VerticalAlignment="Top" Width="105" Click="btnExportTextures_Click"/>
+        <Button x:Name="btnExportSound" Content="Export Sound..." HorizontalAlignment="Right" Margin="0,64,10,0" VerticalAlignment="Top" Width="105" Click="btnExportSound_Click"/>
+
+    </Grid>
+</Window>
