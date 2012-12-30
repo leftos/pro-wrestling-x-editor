@@ -1,12 +1,15 @@
 ﻿<Window x:Class="WrasslingImpExp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Pro Wrestling X - by Leftos &amp; JaoSming" Height="216" Width="460">
     <Grid>
         <Button x:Name="btnExportModels" Content="Export Models..." HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="105" Click="btnExportModels_Click"/>
-        <ProgressBar x:Name="pb" HorizontalAlignment="Left" Height="25" Margin="85,208,0,0" VerticalAlignment="Top" Width="364"/>
+        <ProgressBar x:Name="pb" Height="25" Margin="10,0,10,26" VerticalAlignment="Bottom"/>
         <Button x:Name="btnExportTextures" Content="Export Textures..." HorizontalAlignment="Right" Margin="0,37,10,0" VerticalAlignment="Top" Width="105" Click="btnExportTextures_Click"/>
-        <Button x:Name="btnExportSound" Content="Export Sound..." HorizontalAlignment="Right" Margin="0,64,10,0" VerticalAlignment="Top" Width="105" Click="btnExportSound_Click"/>
+        <Button x:Name="btnExportSound" Content="Export Sounds..." HorizontalAlignment="Right" Margin="0,64,10,0" VerticalAlignment="Top" Width="105" Click="btnExportSound_Click"/>
+        <Button x:Name="btnImportModels" Content="Import Models..." HorizontalAlignment="Right" Margin="0,10,120,0" VerticalAlignment="Top" Width="105" Click="btnImportModels_Click"/>
+        <Button x:Name="btnImportTextues" Content="Import Textures..." HorizontalAlignment="Right" Margin="0,37,120,0" VerticalAlignment="Top" Width="105" Click="btnImportTextues_Click"/>
+        <Button x:Name="btnImportSounds" Content="Import Sounds..." HorizontalAlignment="Right" Margin="0,64,120,0" VerticalAlignment="Top" Width="105" Click="btnImportSounds_Click"/>
 
     </Grid>
 </Window>
