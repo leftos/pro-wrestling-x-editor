@@ -1,22 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Copyright Notice
+
+//    Copyright 2011-2013 Eleftherios Aslanoglou
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+#endregion
+
+#region Using Directives
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using Microsoft.Win32;
+
+#endregion
 
 namespace WrasslingImpExp
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -34,31 +46,31 @@ namespace WrasslingImpExp
 
         private void btnExportModels_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick the models file";
             ofd.ShowDialog();
 
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            GraphicsImportExport.ExportAll(ofd.FileName, new char[] { 'x', 'o', 'f', ' ', '0', '3', '0', '3' }, 72, "PWXMDP.dat", "Models");
+            GraphicsImportExport.ExportAll(ofd.FileName, new[] {'x', 'o', 'f', ' ', '0', '3', '0', '3'}, 72, "PWXMDP.dat", "Models");
         }
 
         private void btnExportTextures_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick the textures file";
             ofd.ShowDialog();
 
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            GraphicsImportExport.ExportAll(ofd.FileName, new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }, 72, "PWXTX.dat", "Textures");
+            GraphicsImportExport.ExportAll(ofd.FileName, new byte[] {137, 80, 78, 71, 13, 10, 26, 10}, 72, "PWXTX.dat", "Textures");
         }
 
         private void btnExportSound_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick the sound file";
             ofd.ShowDialog();
 
@@ -70,14 +82,14 @@ namespace WrasslingImpExp
 
         private void btnImportModels_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick one of the models you want to import";
             ofd.ShowDialog();
 
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            var path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
+            string path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
 
             ofd = new OpenFileDialog();
             ofd.Title = "Pick the parameters file";
@@ -86,10 +98,10 @@ namespace WrasslingImpExp
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            var namesFileInput = ofd.FileName;
+            string namesFileInput = ofd.FileName;
 
-            var datFile = FilesPath + @"\PWXMD.dat";
-            var namesFileOutput = FilesPath + @"\PWXMDP.dat";
+            string datFile = FilesPath + @"\PWXMD.dat";
+            string namesFileOutput = FilesPath + @"\PWXMDP.dat";
             /*
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Give me a fucking name, talk MOTHERFUCKER";
@@ -115,14 +127,14 @@ namespace WrasslingImpExp
 
         private void btnImportTextues_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick one of the textures you want to import";
             ofd.ShowDialog();
 
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            var path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
+            string path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
 
             ofd = new OpenFileDialog();
             ofd.Title = "Pick the parameters file";
@@ -131,10 +143,10 @@ namespace WrasslingImpExp
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            var namesFileInput = ofd.FileName;
+            string namesFileInput = ofd.FileName;
 
-            var datFile = FilesPath + @"\PWXLEVTEX.dat";
-            var namesFileOutput = FilesPath + @"\PWXTX.dat";
+            string datFile = FilesPath + @"\PWXLEVTEX.dat";
+            string namesFileOutput = FilesPath + @"\PWXTX.dat";
             /*
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Give me a fucking name, talk MOTHERFUCKER";
@@ -160,15 +172,15 @@ namespace WrasslingImpExp
 
         private void btnImportSounds_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Title = "Pick one of the sounds you want to import";
             ofd.ShowDialog();
 
             if (String.IsNullOrWhiteSpace(ofd.FileName))
                 return;
 
-            var path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
-            var datFile = FilesPath + @"\PWXSD.dat";
+            string path = ofd.FileName.Replace(Path.GetFileName(ofd.FileName), "");
+            string datFile = FilesPath + @"\PWXSD.dat";
 
             SoundImportExport.ImportAll(path, datFile);
         }

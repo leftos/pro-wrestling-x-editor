@@ -1,10 +1,32 @@
-﻿using System;
+﻿#region Copyright Notice
+
+//    Copyright 2011-2013 Eleftherios Aslanoglou
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+#endregion
+
+#region Using Directives
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+
+#endregion
 
 namespace WrasslingImpExp
 {
@@ -15,7 +37,7 @@ namespace WrasslingImpExp
 
         public static void ExportAll(string filename, char[] header, int namesLength, string namesFile, string folderName)
         {
-            byte[] array = new byte[header.Length];
+            var array = new byte[header.Length];
             for (int i = 0; i < header.Length; i++)
             {
                 array[i] = (byte) header[i];
@@ -28,9 +50,9 @@ namespace WrasslingImpExp
             string directory = filename.Replace(Path.GetFileName(filename), "");
             string pathToFile = namesFile;
 
-            List<string> listOfNames = new List<string>();
+            var listOfNames = new List<string>();
 
-            BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(pathToFile)));
+            var br = new BinaryReader(new MemoryStream(File.ReadAllBytes(pathToFile)));
             while (br.BaseStream.Length - br.BaseStream.Position >= namesLength)
             {
                 string name = "";
@@ -58,19 +80,19 @@ namespace WrasslingImpExp
             }
 
             List<string> filesToImport = Directory.GetFiles(pathToFiles).ToList();
-            List<string> filesToImport_Names = new List<string>();
+            var filesToImport_Names = new List<string>();
             filesToImport.ForEach(f => filesToImport_Names.Add(Path.GetFileName(f)));
-            
+
             List<string> names = GrabNames(namesFileInput, namesLength, namesFileInput);
 
-            List<byte> data = new List<byte>();
-            List<int> offsets = new List<int>();
+            var data = new List<byte>();
+            var offsets = new List<int>();
             offsets.Add(0);
-            List<int> lengths = new List<int>();
+            var lengths = new List<int>();
 
             for (int i = 0; i < names.Count; i++)
             {
-                var name = names[i];
+                string name = names[i];
                 if (filesToImport_Names.Contains(name))
                 {
                     data.AddRange(File.ReadAllBytes(pathToFiles + @"\" + name).ToList());
@@ -81,18 +103,18 @@ namespace WrasslingImpExp
             File.WriteAllBytes(datFile, data.ToArray());
             offsets.RemoveAt(offsets.Count - 1);
 
-            List<string> hexOffsets = new List<string>();
-            List<string> hexLengths = new List<string>();
+            var hexOffsets = new List<string>();
+            var hexLengths = new List<string>();
             for (int i = 0; i < offsets.Count; i++)
             {
                 hexOffsets.Add(String.Format("{0:X}", offsets[i]).PadLeft(8, '0'));
                 hexLengths.Add(String.Format("{0:X}", lengths[i]).PadLeft(8, '0'));
             }
 
-            BinaryWriter bw = new BinaryWriter(File.OpenWrite(namesFileOutput));
+            var bw = new BinaryWriter(File.OpenWrite(namesFileOutput));
             for (int j = 0; j < names.Count; j++)
             {
-                var name = names[j];
+                string name = names[j];
                 bw.Write(name.ToCharArray());
                 bw.Write((byte) 0);
                 int countOfFEs = namesLength - name.Length - 9;
@@ -100,13 +122,13 @@ namespace WrasslingImpExp
                 {
                     bw.Write((byte) 254);
                 }
-                var hexOffset = ReverseByteOrder(hexOffsets[j]);
+                string hexOffset = ReverseByteOrder(hexOffsets[j]);
                 for (int i = 0; i <= 6; i += 2)
                 {
                     bw.Write(Convert.ToByte(hexOffset.Substring(i, 2), 16));
                 }
 
-                var hexLength = ReverseByteOrder(hexLengths[j]);
+                string hexLength = ReverseByteOrder(hexLengths[j]);
                 for (int i = 0; i <= 6; i += 2)
                 {
                     bw.Write(Convert.ToByte(hexLength.Substring(i, 2), 16));
@@ -130,7 +152,7 @@ namespace WrasslingImpExp
         public static void ExportAll(string filename, byte[] header, int namesLength, string namesFile, string folderName)
         {
             List<string> names = GrabNames(filename, namesLength, filename.Replace(Path.GetFileName(filename), "") + @"\" + namesFile);
-            var folder = FilesPath + @"\" + folderName;
+            string folder = FilesPath + @"\" + folderName;
             if (!Directory.Exists(folder))
             {
                 if (!Directory.Exists(FilesPath))
@@ -144,18 +166,18 @@ namespace WrasslingImpExp
                 Directory.GetFiles(folder).ToList().ForEach(File.Delete);
             }
 
-            BackgroundWorker worker = new BackgroundWorker();
+            var worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
 
-            worker.DoWork += delegate(object sender, DoWorkEventArgs args)
+            worker.DoWork += delegate
                              {
                                  /* Here's the trick that makes everything faster. In the line below, we had File.OpenRead(), which
                                   * makes the BinaryReader use the file in the hard-drive. Now, hard-drive access is much slower than
                                   * RAM access, so why not load the whole file into the RAM, so that we can use the GB/sec of bandwidth
                                   * using RAM offers? That's where MemoryStream comes into use. All I'm doing is reading the whole file
                                   * into RAM, and then giving it to BinaryReader. We work with the file the same way, just much faster. */
-                                 BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(filename)), Encoding.ASCII);
-                                 List<long> headerOffsets = new List<long>();
+                                 var br = new BinaryReader(new MemoryStream(File.ReadAllBytes(filename)), Encoding.ASCII);
+                                 var headerOffsets = new List<long>();
                                  while (br.BaseStream.Length - br.BaseStream.Position >= header.Length)
                                  {
                                      if (br.ReadBytes(header.Length).SequenceEqual(header))
@@ -166,13 +188,13 @@ namespace WrasslingImpExp
                                      else
                                      {
                                          br.BaseStream.Position -= (header.Length - 1);
-                                             // This should be dynamic by header.Length, not hard-coded
+                                         // This should be dynamic by header.Length, not hard-coded
                                      }
                                  }
 
                                  for (int i = 0; i < headerOffsets.Count; i++)
                                  {
-                                     var headerOffset = headerOffsets[i];
+                                     long headerOffset = headerOffsets[i];
                                      br.BaseStream.Position = headerOffset;
                                      byte[] data;
                                      if (i == headerOffsets.Count - 1)
@@ -183,7 +205,7 @@ namespace WrasslingImpExp
                                      {
                                          data = br.ReadBytes(Convert.ToInt32(headerOffsets[i + 1] - headerOffsets[i]));
                                      }
-                                     BinaryWriter bw = new BinaryWriter(File.OpenWrite(folder + @"\" + names[i]));
+                                     var bw = new BinaryWriter(File.OpenWrite(folder + @"\" + names[i]));
                                      bw.Write(data);
                                      bw.Close();
                                  }
@@ -218,7 +240,7 @@ namespace WrasslingImpExp
 
         public static void ExportAll(string filename, string folderName)
         {
-            var folder = FilesPath + @"\" + folderName;
+            string folder = FilesPath + @"\" + folderName;
             if (!Directory.Exists(folder))
             {
                 if (!Directory.Exists(FilesPath))
@@ -232,14 +254,14 @@ namespace WrasslingImpExp
                 Directory.GetFiles(folder).ToList().ForEach(File.Delete);
             }
 
-            char[] header = new char[] {'R', 'I', 'F', 'F'};
-            BackgroundWorker worker = new BackgroundWorker();
+            var header = new[] {'R', 'I', 'F', 'F'};
+            var worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
 
-            worker.DoWork += delegate(object sender, DoWorkEventArgs args)
+            worker.DoWork += delegate
                              {
-                                 BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(filename)), Encoding.ASCII);
-                                 List<long> headerOffsets = new List<long>();
+                                 var br = new BinaryReader(new MemoryStream(File.ReadAllBytes(filename)), Encoding.ASCII);
+                                 var headerOffsets = new List<long>();
                                  while (br.BaseStream.Length - br.BaseStream.Position >= header.Length)
                                  {
                                      if (br.ReadChars(header.Length).SequenceEqual(header))
@@ -249,12 +271,12 @@ namespace WrasslingImpExp
                                      else
                                      {
                                          br.BaseStream.Position -= (header.Length - 1);
-                                             // This should be dynamic by header.Length, not hard-coded
+                                         // This should be dynamic by header.Length, not hard-coded
                                      }
                                  }
                                  for (int i = 0; i < headerOffsets.Count; i++)
                                  {
-                                     var headerOffset = headerOffsets[i];
+                                     long headerOffset = headerOffsets[i];
                                      br.BaseStream.Position = headerOffset;
                                      byte[] data;
                                      if (i == headerOffsets.Count - 1)
@@ -265,7 +287,7 @@ namespace WrasslingImpExp
                                      {
                                          data = br.ReadBytes(Convert.ToInt32(headerOffsets[i + 1] - headerOffsets[i]));
                                      }
-                                     BinaryWriter bw = new BinaryWriter(File.OpenWrite(folder + @"\" + i.ToString().PadLeft(8, '0') + ".wav"));
+                                     var bw = new BinaryWriter(File.OpenWrite(folder + @"\" + i.ToString().PadLeft(8, '0') + ".wav"));
                                      bw.Write(data);
                                      bw.Close();
                                  }
@@ -290,7 +312,7 @@ namespace WrasslingImpExp
             List<string> filesToImport = Directory.GetFiles(pathToFiles).ToList();
             filesToImport.Sort();
 
-            List<byte> data = new List<byte>();
+            var data = new List<byte>();
             for (int i = 0; i < filesToImport.Count; i++)
             {
                 data.AddRange(File.ReadAllBytes(filesToImport[i]).ToList());
